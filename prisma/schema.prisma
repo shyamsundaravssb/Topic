@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
 }
 
 datasource db {
@@ -7,12 +7,87 @@ datasource db {
   
 }
 
+// 1. User Model (Hybrid: Google + Credentials)
 model User {
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?   @unique
+  email         String    @unique
+  emailVerified DateTime? // Null means unverified
+  image         String?
+  password      String?   // Null for Google users
+  age           Int?      
+  
+  accounts      Account[]
+  
+  // Custom Relations
+  posts         Post[]
+  createdTopics Topic[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// 2. NextAuth Account (For Google/OAuth)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// 3. Token for Email Verification
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+// 4. Token for Password Reset
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+// 5. Topic Model
+model Topic {
+  id          String   @id @default(cuid())
+  slug        String   @unique 
+  title       String
+  description String?
+  posts       Post[]
+  creator     User     @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  createdAt   DateTime @default(now())
+}
+
+// 6. Post Model
+model Post {
   id        String   @id @default(cuid())
-  email     String   @unique
-  username  String   @unique
-  password  String   // Will store the hashed password
-  age       Int?     // The '?' makes it optional
-  verified  Boolean  @default(false) // Default to unverified on signup
+  title     String
+  content   String   @db.Text
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  topicId   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
   createdAt DateTime @default(now())
 }
