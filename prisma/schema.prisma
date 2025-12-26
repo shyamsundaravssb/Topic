@@ -10,15 +10,14 @@ datasource db {
 
 // 1. User Model (Hybrid: Google + Credentials)
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(cuid()) 
   name          String?
   username      String?   @unique
   email         String    @unique
-  emailVerified DateTime? // Null means unverified
+  emailVerified DateTime?
   image         String?
-  password      String?   // Null for Google users
-  age           Int?      
-  
+  password      String?
+  age           Int?
   accounts      Account[]
   
   // Custom Relations
@@ -27,6 +26,8 @@ model User {
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  @@map("users")
 }
 
 // 2. NextAuth Account (For Google/OAuth)
@@ -51,14 +52,14 @@ model Account {
 
 // 3. Token for Email Verification
 model VerificationToken {
-  id      String   @id @default(cuid())
+  id      String   @id @default(cuid()) 
   email   String
   token   String   @unique
   expires DateTime
 
   @@unique([email, token])
+  @@map("verification_tokens")
 }
-
 // 4. Token for Password Reset
 model PasswordResetToken {
   id      String   @id @default(cuid())
