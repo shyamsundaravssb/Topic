@@ -3,15 +3,48 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma"; // We need to create this next
+import { prisma } from "@/lib/prisma";
 import { authConfig } from "./auth.config";
+import { getUserById } from "@/data/user";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  ...authConfig,
+  ...authConfig, // 1. Inherit 'session' callback from here
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" }, // We use JWT for flexibility
+  session: { strategy: "jwt" },
+
+  events: {
+    async linkAccount({ user }) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
+
+  callbacks: {
+    // 2. We explicitly spread the authConfig callbacks to keep the 'session' logic
+    ...authConfig.callbacks,
+
+    // 3. We define 'jwt' here because it needs Prisma (Server only)
+    async jwt({ token, account }) {
+      if (account) {
+        token.provider = account.provider;
+      }
+
+      if (!token.sub) return token;
+
+      const existingUser = await getUserById(token.sub);
+      if (!existingUser) return token;
+
+      // Sync fresh data from DB to Token
+      token.isProfileComplete = existingUser.isProfileComplete;
+      token.username = existingUser.username;
+
+      return token;
+    },
+  },
+
   providers: [
-    // 1. Google Provider
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -20,25 +53,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           prompt: "consent",
           access_type: "offline",
           response_type: "code",
-          scope:
-            "openid profile email https://www.googleapis.com/auth/user.birthday.read",
+          scope: "openid profile email",
         },
       },
       profile(profile) {
-        // Note: Google doesn't always return birthday in the basic profile
-        // We set what we can.
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          emailVerified: new Date(), // Trusted Provider
-          // age: null // We will let the user fill this later if Google skips it
         };
       },
     }),
 
-    // 2. Credentials Provider (Email + Password)
     Credentials({
       async authorize(credentials) {
         const email = credentials.email as string;
@@ -46,22 +73,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (!email || !password) return null;
 
-        // Find user
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        const user = await prisma.user.findUnique({ where: { email } });
 
-        // Check if user exists and has a password (google users don't)
         if (!user || !user.password) return null;
 
-        // Check password match
         const passwordsMatch = await bcrypt.compare(password, user.password);
         if (!passwordsMatch) return null;
 
-        // CRITICAL: Check verification
-        if (!user.emailVerified) {
-          throw new Error("Email not verified!");
-        }
+        if (!user.emailVerified) throw new Error("Email not verified!");
 
         return user;
       },

@@ -17,7 +17,8 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  age           Int?
+  dob           DateTime?
+  isProfileComplete Boolean @default(false)
   accounts      Account[]
   
   // Custom Relations
