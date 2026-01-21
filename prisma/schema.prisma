@@ -22,7 +22,7 @@ model User {
   accounts      Account[]
   
   // Custom Relations
-  posts         Post[]
+  articles Article[]
   createdTopics Topic[]
   
   createdAt     DateTime  @default(now())
@@ -74,23 +74,37 @@ model PasswordResetToken {
 // 5. Topic Model
 model Topic {
   id          String   @id @default(cuid())
-  slug        String   @unique 
+  slug        String   @unique
   title       String
   description String?
-  posts       Post[]
+  
+  // Relation to Articles
+  articles    Article[]
+  
   creator     User     @relation(fields: [creatorId], references: [id])
   creatorId   String
+  
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt // Good to track updates
 }
 
 // 6. Post Model
-model Post {
+model Article {
   id        String   @id @default(cuid())
+  slug      String   @unique // ✅ URL-friendly identifier
   title     String
   content   String   @db.Text
+  
+  // Relations
   topic     Topic    @relation(fields: [topicId], references: [id])
   topicId   String
+  
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+  
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([topicId]) // Faster lookups
+  @@index([authorId])
 }
