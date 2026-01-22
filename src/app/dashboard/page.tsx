@@ -1,32 +1,43 @@
-import { auth } from "@/auth"; // Server-side session fetch
+import { auth } from "@/auth";
 import { LogoutButton } from "@/modules/auth/components/logout-button";
 import { Button } from "@/components/ui/button";
+import { TopicSearch } from "@/modules/topics/components/topic-search";
 
 const DashboardPage = async () => {
   const session = await auth();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-10 space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+    <div className="min-h-screen bg-background">
+      {/* Top Navigation Bar */}
+      <nav className="border-b border-border bg-card/50 backdrop-blur-md sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="font-bold text-xl text-primary">Topic</div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground hidden sm:block">
+              {session?.user?.username}
+            </span>
+            <LogoutButton>
+              <Button variant="ghost" size="sm">
+                Sign Out
+              </Button>
+            </LogoutButton>
+          </div>
+        </div>
+      </nav>
 
-      <div className="p-4 border rounded-md bg-slate-100 dark:bg-slate-900 shadow-sm">
-        <p className="text-muted-foreground">
-          Current User:{" "}
-          <span className="font-semibold text-foreground">
-            {session?.user?.username || session?.user?.email}
-          </span>
+      {/* Hero Section */}
+      <main className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 text-foreground">
+          What do you want to <span className="text-primary">explore</span>?
+        </h1>
+        <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+          Discover articles, share your knowledge, or start a completely new
+          discussion.
         </p>
-        <p className="text-sm text-gray-500 mt-1">
-          Status: {session?.user?.isProfileComplete ? "Active" : "Incomplete"}
-        </p>
-      </div>
 
-      {/* ✅ The Logout Button */}
-      <LogoutButton>
-        <Button variant="destructive" size="lg">
-          Sign Out
-        </Button>
-      </LogoutButton>
+        {/* The Search Component */}
+        <TopicSearch />
+      </main>
     </div>
   );
 };

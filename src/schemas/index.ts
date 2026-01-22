@@ -29,7 +29,7 @@ export const RegisterSchema = z.object({
     },
     {
       message: "You must be at least 13 years old",
-    }
+    },
   ),
 });
 
@@ -52,7 +52,7 @@ export const CompleteProfileSchema = z.object({
     },
     {
       message: "You must be at least 13 years old",
-    }
+    },
   ),
 });
 
@@ -74,5 +74,23 @@ export const ResetSchema = z.object({
 export const NewPasswordSchema = z.object({
   password: z.string().min(6, {
     message: "Minimum 6 characters required",
+  }),
+});
+
+export const TopicSchema = z.object({
+  title: z.string().min(3, {
+    message: "Topic title must be at least 3 characters",
+  }),
+  description: z.string().min(10, {
+    message: "Description must be at least 10 characters",
+  }),
+});
+
+export const ArticleSchema = z.object({
+  title: z.string().min(5, {
+    message: "Title must be at least 5 characters",
+  }),
+  content: z.string().min(50, {
+    message: "Article content must be at least 50 characters",
   }),
 });
