@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { LogoutButton } from "@/modules/auth/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { TopicSearch } from "@/modules/topics/components/topic-search";
+import Link from "next/link"; // ✅ Import Link
 
 const DashboardPage = async () => {
   const session = await auth();
@@ -13,9 +14,13 @@ const DashboardPage = async () => {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="font-bold text-xl text-primary">Topic</div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground hidden sm:block">
-              {session?.user?.username}
-            </span>
+            <Link
+              href={`/user/${session?.user?.username}`}
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hidden sm:block"
+            >
+              @{session?.user?.username}
+            </Link>
+
             <LogoutButton>
               <Button variant="ghost" size="sm">
                 Sign Out
@@ -25,7 +30,6 @@ const DashboardPage = async () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-4 py-20 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 text-foreground">
           What do you want to <span className="text-primary">explore</span>?
@@ -35,7 +39,6 @@ const DashboardPage = async () => {
           discussion.
         </p>
 
-        {/* The Search Component */}
         <TopicSearch />
       </main>
     </div>

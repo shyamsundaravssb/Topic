@@ -16,6 +16,7 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  bio           String?   @db.Text  
   password      String?
   dob           DateTime?
   isProfileComplete Boolean @default(false)
@@ -77,6 +78,7 @@ model Topic {
   slug        String   @unique
   title       String
   description String?
+  image       String?
   
   // Relation to Articles
   articles    Article[]

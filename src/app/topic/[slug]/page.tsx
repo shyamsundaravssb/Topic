@@ -14,22 +14,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 
 interface TopicPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const TopicPage = async ({ params }: TopicPageProps) => {
+const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
   const { slug } = await params;
+  const { fromUser } = await searchParams; // Read query param
+
   const topic = await getTopicBySlug(slug);
 
-  if (!topic) {
-    notFound();
-  }
+  if (!topic) notFound();
+
+  // Logic: If 'fromUser' exists, back button goes to Profile. Else Dashboard.
+  const backHref = fromUser ? `/user/${fromUser}` : "/dashboard";
+  const backLabel = fromUser ? "Back to Profile" : "Back to Dashboard";
 
   return (
     <div className="min-h-screen bg-background">
-      {/* 2. Navigation / Back Button Area */}
+      {/* Navigation Area */}
       <div className="max-w-5xl mx-auto px-4 pt-6">
         <Button
           variant="ghost"
@@ -37,9 +40,10 @@ const TopicPage = async ({ params }: TopicPageProps) => {
           asChild
           className="pl-0 gap-2 text-muted-foreground hover:text-primary"
         >
-          <Link href="/dashboard">
+          {/*Dynamic Link */}
+          <Link href={backHref}>
             <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
+            {backLabel}
           </Link>
         </Button>
       </div>

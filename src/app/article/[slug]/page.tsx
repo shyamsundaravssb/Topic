@@ -7,40 +7,52 @@ import { Button } from "@/components/ui/button";
 import { getArticleBySlug } from "@/modules/articles/actions/get-article";
 
 interface ArticlePageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const ArticlePage = async ({ params }: ArticlePageProps) => {
+const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
   const { slug } = await params;
+  const { fromUser } = await searchParams; //  Read query param
+
   const article = await getArticleBySlug(slug);
 
-  if (!article) {
-    notFound();
-  }
+  if (!article) notFound();
+
+  // Logic: If from profile -> Back to Profile. Else -> Back to Topic.
+  const backHref = fromUser
+    ? `/user/${fromUser}`
+    : `/topic/${article.topic.slug}`;
+
+  const backLabel = fromUser
+    ? "Back to Profile"
+    : `Back to ${article.topic.title}`;
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* 1. Navigation Bar */}
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+          {/* 1. Dynamic Back Button */}
           <Button
             variant="ghost"
             size="sm"
             asChild
             className="pl-0 gap-2 text-muted-foreground hover:text-primary"
           >
-            <Link href={`/topic/${article.topic.slug}`}>
+            <Link href={backHref}>
               <ArrowLeft className="h-4 w-4" />
-              Back to {article.topic.title}
+              {backLabel}
             </Link>
           </Button>
 
-          <div className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+          {/* 2. Topic Link Badge (Your Idea!) */}
+          <Link
+            href={`/topic/${article.topic.slug}`}
+            className="text-sm font-medium text-muted-foreground flex items-center gap-1 hover:text-primary hover:underline transition-all"
+          >
             <Hash className="h-3 w-3" />
             {article.topic.title}
-          </div>
+          </Link>
         </div>
       </nav>
 
