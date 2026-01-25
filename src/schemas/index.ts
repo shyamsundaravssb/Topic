@@ -94,3 +94,15 @@ export const ArticleSchema = z.object({
     message: "Article content must be at least 50 characters",
   }),
 });
+
+export const ProfileSchema = z.object({
+  name: z.string().min(3, {
+    message: "Name must be at least 3 characters",
+  }),
+  bio: z.string().optional(),
+  image: z
+    .string()
+    .url({ message: "Invalid URL" })
+    .optional()
+    .or(z.literal("")),
+});
