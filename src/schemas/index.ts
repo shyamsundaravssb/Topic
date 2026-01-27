@@ -106,3 +106,14 @@ export const ProfileSchema = z.object({
     .optional()
     .or(z.literal("")),
 });
+
+export const TopicEditSchema = z.object({
+  description: z.string().min(10, {
+    message: "Description must be at least 10 characters",
+  }),
+  image: z
+    .string()
+    .url({ message: "Invalid URL" })
+    .optional()
+    .or(z.literal("")),
+});
