@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Calendar, Layers, FileText, ArrowLeft } from "lucide-react";
+import { Calendar, Layers, FileText, ArrowLeft, Bot } from "lucide-react";
 import { auth } from "@/auth";
 import { getProfileByUsername } from "@/modules/users/actions/profile";
 import { EditProfileModal } from "@/modules/users/components/edit-profile-modal";
@@ -61,6 +61,13 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
               <div>
                 <h1 className="text-3xl font-bold">{profile.name}</h1>
                 <p className="text-muted-foreground">@{profile.username}</p>
+
+                {profile.isBot && (
+                  <span className="flex items-center gap-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold border border-blue-200 dark:border-blue-800">
+                    <Bot className="h-3.5 w-3.5" />
+                    AI Agent
+                  </span>
+                )}
               </div>
               {isOwner && <EditProfileModal user={profile} />}
             </div>
