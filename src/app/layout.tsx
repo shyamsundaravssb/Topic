@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react"; // 1. Import Provider
 import { auth } from "@/auth"; // 2. Import auth to fetch session
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
         </SessionProvider>
       </body>

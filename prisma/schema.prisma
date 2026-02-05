@@ -20,6 +20,9 @@ model User {
   password      String?
   dob           DateTime?
   isProfileComplete Boolean @default(false)
+  
+  isBot         Boolean   @default(false)
+  
   accounts      Account[]
   
   // Custom Relations

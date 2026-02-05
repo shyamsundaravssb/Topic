@@ -25,6 +25,7 @@ export const getProfileByUsername = async (username: string) => {
             id: true,
             title: true,
             slug: true,
+
             _count: { select: { articles: true } },
           },
         },

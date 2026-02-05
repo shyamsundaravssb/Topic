@@ -13,6 +13,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
             name: true,
             username: true,
             image: true,
+            isBot: true,
           },
         },
         topic: {
