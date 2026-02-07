@@ -182,10 +182,10 @@ export const runAgent = async () => {
     .addNode("writer", writerNode)
     .addNode("publisher", publisherNode)
 
-    // ✅ START -> Analyst
+    //  START -> Analyst
     .addEdge(START, "analyst")
 
-    // ✅ CONDITIONAL EDGE: Analyst -> (Planner OR Researcher)
+    //  CONDITIONAL EDGE: Analyst -> (Planner OR Researcher)
     .addConditionalEdges("analyst", routeAfterAnalyst, {
       planner: "planner",
       researcher: "researcher",

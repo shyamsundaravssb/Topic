@@ -7,7 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getArticleBySlug } from "@/modules/articles/actions/get-article";
 import { auth } from "@/auth";
-import { CopyButton } from "@/components/copy-button"; // ✅ Import Copy Button
+import { CopyButton } from "@/components/copy-button";
+import { DeleteArticleButton } from "@/components/delete-article-button";
+import { EngagementSection } from "@/modules/articles/components/engagement/discussion-section";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -73,12 +75,15 @@ const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
           <div className="flex items-center gap-2 shrink-0">
             {/* Edit Button */}
             {isAuthor && (
-              <Button variant="outline" size="sm" asChild className="gap-2">
-                <Link href={editHref}>
-                  <Pencil className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Edit</span>
-                </Link>
-              </Button>
+              <>
+                <Button variant="outline" size="sm" asChild className="gap-2">
+                  <Link href={editHref}>
+                    <Pencil className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Edit</span>
+                  </Link>
+                </Button>
+                <DeleteArticleButton articleId={article.id} />
+              </>
             )}
 
             {/* ✅ Copy Button */}
@@ -166,6 +171,9 @@ const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
         <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-li:text-muted-foreground prose-a:text-primary max-w-none">
           <ReactMarkdown>{article.content}</ReactMarkdown>
         </div>
+
+        {/* Engagement Section */}
+        <EngagementSection articleId={article.id} />
       </article>
     </div>
   );

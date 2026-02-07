@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 import { ArticleSchema } from "@/schemas";
 import { updateArticle } from "@/modules/articles/actions/update-article";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Editor } from "@/components/editor";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -129,10 +129,10 @@ export const EditArticleForm = ({
                 <FormItem>
                   <FormLabel>Content</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      disabled={isPending || isRedirecting}
-                      className="min-h-[400px] text-base leading-relaxed p-4 bg-secondary/50 resize-y"
+                    <Editor
+                      value={field.value}
+                      onChange={field.onChange}
+                      editable={!isPending && !isRedirecting}
                     />
                   </FormControl>
                   <FormMessage />

@@ -28,6 +28,8 @@ model User {
   // Custom Relations
   articles Article[]
   createdTopics Topic[]
+  votes Vote[]
+  discussions Discussion[]
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -112,4 +114,48 @@ model Article {
   
   @@index([topicId]) // Faster lookups
   @@index([authorId])
+  
+  // Relations
+  votes       Vote[]
+  discussions Discussion[]
+}
+
+// 7. Vote Model
+enum VoteType {
+  UP
+  DOWN
+}
+
+model Vote {
+  userId    String
+  articleId String
+  type      VoteType
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, articleId]) // One vote per user per article
+  @@map("votes")
+}
+
+// 8. Discussion (Comment) Model
+model Discussion {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  userId    String
+  articleId String
+  parentId  String?  // For threading
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  
+  // Self-relation for threading
+  parent  Discussion? @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Discussion[] @relation("DiscussionReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([articleId]) // Crucial for fetching comments by article
+  @@map("discussions")
 }
