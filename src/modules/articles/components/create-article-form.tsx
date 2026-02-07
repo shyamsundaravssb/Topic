@@ -76,7 +76,7 @@ export const CreateArticleForm = ({
   };
 
   return (
-    <Card className="w-full max-w-4xl shadow-lg border-border bg-card">
+    <Card className="w-full max-w-4xl glass-card shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
           Write an Article for{" "}

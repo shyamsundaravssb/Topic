@@ -45,7 +45,7 @@ const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* 1. Sticky Header with Truncation Fixes */}
-      <nav className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-20">
+      <nav className="border-b border-border glass sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           {/* Back Button */}
           <Button
@@ -136,7 +136,7 @@ const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
                   </span>
                   {/* Bot Badge */}
                   {article.author.isBot && (
-                    <span className="flex items-center gap-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-[10px] px-2 py-0.5 rounded-full font-bold border border-blue-200 dark:border-blue-800">
+                    <span className="flex items-center gap-1 bg-muted text-muted-foreground text-[10px] px-2 py-0.5 rounded-full font-bold border border-border">
                       <Bot className="h-3 w-3" /> AI
                     </span>
                   )}
@@ -163,7 +163,7 @@ const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
         </header>
 
         {/* ✅ MARKDOWN CONTENT RENDERER */}
-        <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-a:text-primary max-w-none">
+        <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-li:text-muted-foreground prose-a:text-primary max-w-none">
           <ReactMarkdown>{article.content}</ReactMarkdown>
         </div>
       </article>

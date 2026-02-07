@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Calendar, Layers, FileText, ArrowLeft, Bot } from "lucide-react";
 import { auth } from "@/auth";
 import { getProfileByUsername } from "@/modules/users/actions/profile";
+import { stripMarkdown } from "@/lib/utils";
 import { EditProfileModal } from "@/modules/users/components/edit-profile-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -105,57 +106,65 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
             <TabsTrigger value="articles">Articles</TabsTrigger>
           </TabsList>
 
-          {/* 3. Topics Content (Moved up) */}
-          <TabsContent value="topics" className="mt-8 space-y-4">
+          {/* 3. Topics Content (Grid Layout) */}
+          <TabsContent value="topics" className="mt-8">
             {profile.createdTopics.length > 0 ? (
-              profile.createdTopics.map((topic) => (
-                // ✅ ADDED query param
-                <Link
-                  key={topic.id}
-                  href={`/topic/${topic.slug}${backLinkParams}`}
-                >
-                  <Card className="hover:bg-accent/50 transition-colors">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{topic.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {topic._count.articles} Articles posted
-                      </p>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              ))
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {profile.createdTopics.map((topic) => (
+                  <Link
+                    key={topic.id}
+                    href={`/topic/${topic.slug}${backLinkParams}`}
+                  >
+                    <Card className="glass-card h-full hover:border-primary/20">
+                      <CardHeader>
+                        <CardTitle className="text-xl">{topic.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {topic._count.articles} Articles posted
+                        </p>
+                      </CardHeader>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
             ) : (
-              <p className="text-muted-foreground py-8">
+              <p className="text-muted-foreground py-8 text-center italic">
                 No topics created yet.
               </p>
             )}
           </TabsContent>
 
-          {/* 4. Articles Content */}
-          <TabsContent value="articles" className="mt-8 space-y-4">
+          {/* 4. Articles Content (Grid Layout) */}
+          <TabsContent value="articles" className="mt-8">
             {profile.articles.length > 0 ? (
-              profile.articles.map((article) => (
-                // ✅ ADDED query param
-                <Link
-                  key={article.id}
-                  href={`/article/${article.slug}${backLinkParams}`}
-                >
-                  <Card className="hover:bg-accent/50 transition-colors">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{article.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        in{" "}
-                        <span className="font-medium text-primary">
-                          {article.topic.title}
-                        </span>
-                        • {format(new Date(article.createdAt), "MMM d, yyyy")}
-                      </p>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              ))
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {profile.articles.map((article) => (
+                  <Link
+                    key={article.id}
+                    href={`/article/${article.slug}${backLinkParams}`}
+                  >
+                    <Card className="glass-card h-full hover:border-primary/20">
+                      <CardHeader>
+                        <CardTitle className="text-lg leading-tight line-clamp-2">
+                          {stripMarkdown(article.title)}
+                        </CardTitle>
+                        <div className="text-sm text-muted-foreground pt-3 flex flex-col gap-1">
+                          <span className="flex items-center gap-1">
+                            in{" "}
+                            <span className="font-medium text-foreground">
+                              {article.topic.title}
+                            </span>
+                          </span>
+                          <span className="text-xs">
+                            {format(new Date(article.createdAt), "MMM d, yyyy")}
+                          </span>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
             ) : (
-              <p className="text-muted-foreground py-8">
+              <p className="text-muted-foreground py-8 text-center italic">
                 No articles written yet.
               </p>
             )}

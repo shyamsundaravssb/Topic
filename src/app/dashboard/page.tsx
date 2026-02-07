@@ -13,7 +13,7 @@ const DashboardPage = async () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation Bar */}
-      <nav className="border-b border-border bg-card/50 backdrop-blur-md sticky top-0 z-10">
+      <nav className="border-b border-border glass sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           {/* Left Side: Logo */}
           <div className="font-bold text-xl text-primary">Topic</div>
@@ -39,7 +39,7 @@ const DashboardPage = async () => {
               </Button>
             </div>
 
-            <div className="h-4 w-[1px] bg-border mx-1 hidden sm:block" />
+            <div className="h-4 w-px bg-border mx-1 hidden sm:block" />
 
             {/* 3. User Profile Link */}
             <Link

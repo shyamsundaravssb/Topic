@@ -35,7 +35,7 @@ export const AgentTrigger = () => {
       onClick={runAgent}
       disabled={loading}
       variant="outline"
-      className="gap-2 border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 hover:text-blue-800 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800"
+      className="gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 border-border"
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin" />

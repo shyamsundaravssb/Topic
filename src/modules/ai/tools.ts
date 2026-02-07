@@ -70,3 +70,36 @@ export const createArticleTool = async (
     return null;
   }
 };
+
+// Find topics that need content (0 articles)
+export const getEmptyTopics = async (limit = 5) => {
+  try {
+    const topics = await prisma.topic.findMany({
+      where: {
+        articles: {
+          none: {}, // Checks for 0 articles associated with this topic
+        },
+      },
+      take: limit,
+      orderBy: {
+        createdAt: "desc", // Prioritize newer empty topics
+      },
+      select: {
+        title: true,
+        slug: true,
+        description: true,
+      },
+    });
+    return topics;
+  } catch (error) {
+    console.error("Error fetching empty topics:", error);
+    return [];
+  }
+};
+
+// Get quick stats to help AI decide (Optional but helpful)
+export const getTopicStats = async () => {
+  const totalTopics = await prisma.topic.count();
+  const totalArticles = await prisma.article.count();
+  return { totalTopics, totalArticles };
+};

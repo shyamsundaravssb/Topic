@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { PenTool, Calendar, ArrowLeft } from "lucide-react";
 import { auth } from "@/auth";
 import { getTopicBySlug } from "@/modules/topics/actions/get-topic";
+import { stripMarkdown } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -59,18 +60,18 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          /* Fallback Gradient */
-          <div className="w-full h-full bg-gradient-to-br from-violet-500/20 via-purple-500/20 to-blue-500/20" />
+          /* Fallback Gradient (Monochrome) */
+          <div className="w-full h-full bg-linear-to-br from-zinc-200 via-zinc-300 to-zinc-400 dark:from-zinc-800 dark:via-zinc-900 dark:to-black" />
         )}
 
         {/* Optional: A very subtle gradient at the bottom to make the white card pop, 
             but keep the top of the image crystal clear */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
       </div>
 
       {/* 3. Header Info Section */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 -mt-12 relative z-10">
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6 md:p-8">
+        <div className="glass-card rounded-xl p-6 md:p-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-4 flex-1">
               <div className="flex items-center justify-between md:justify-start gap-4">
@@ -134,16 +135,16 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {topic.articles.map((article) => (
               <Link key={article.id} href={`/article/${article.slug}`}>
-                <Card className="hover:shadow-lg transition-all cursor-pointer h-full border-border hover:border-primary/50 group">
+                <Card className="glass-card hover:translate-y-[-4px] transition-all cursor-pointer h-full hover:border-primary/20 group">
                   <CardHeader>
                     <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                      {article.title}
+                      {stripMarkdown(article.title)}
                     </CardTitle>
                   </CardHeader>
 
                   <CardContent>
                     <p className="text-muted-foreground text-sm line-clamp-3">
-                      {article.content.substring(0, 150)}...
+                      {stripMarkdown(article.content).substring(0, 150)}...
                     </p>
                   </CardContent>
 

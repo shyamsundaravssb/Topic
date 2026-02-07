@@ -70,7 +70,7 @@ export const CreateTopicForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-[600px] shadow-lg border-border bg-card">
+    <Card className="w-full max-w-[600px] glass-card shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-primary">
           Create a Topic
