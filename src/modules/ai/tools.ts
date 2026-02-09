@@ -97,9 +97,77 @@ export const getEmptyTopics = async (limit = 5) => {
   }
 };
 
-// Get quick stats to help AI decide (Optional but helpful)
-export const getTopicStats = async () => {
-  const totalTopics = await prisma.topic.count();
-  const totalArticles = await prisma.article.count();
-  return { totalTopics, totalArticles };
+// Get recent activity to help Analyst decide
+export const getRecentActivity = async () => {
+  const [topics, articles] = await Promise.all([
+    prisma.topic.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      select: {
+        title: true,
+        slug: true,
+        _count: { select: { articles: true } },
+      },
+    }),
+    prisma.article.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: { topic: { select: { title: true } } }, // Include topic title
+      // select: { title: true, slug: true, topic: { select: { title: true } } },
+    }),
+  ]);
+  return { topics, articles };
+};
+
+// 4. Tool to Post a Comment
+export const createDiscussionComment = async (
+  articleId: string,
+  content: string,
+  parentId?: string,
+) => {
+  const botUser = await prisma.user.findUnique({
+    where: { username: "ai_curator" },
+  });
+
+  if (!botUser) throw new Error("Bot user not found");
+
+  try {
+    const discussion = await prisma.discussion.create({
+      data: {
+        content,
+        articleId,
+        userId: botUser.id,
+        parentId,
+      },
+    });
+    return discussion;
+  } catch (e) {
+    console.error("Failed to create comment:", e);
+    return null;
+  }
+};
+
+// 5. Semantic De-duplication helper
+// In a real app, use embeddings. Here, we use string similarity via LLM later or simple normalizing.
+export const normalizeTopic = (title: string) => {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]/g, "");
+};
+
+// Check if a semantically similar topic exists (Simple version)
+export const findSimilarTopic = async (title: string) => {
+  // This part will be handled by the Analyst Node using the LLM for better semantic matching
+  // But we can check for exact or near-exact matches here
+  const normalized = normalizeTopic(title);
+  const topics = await prisma.topic.findMany({
+    select: { title: true, slug: true },
+  });
+
+  return topics.find(
+    (t) =>
+      normalizeTopic(t.title).includes(normalized) ||
+      normalized.includes(normalizeTopic(t.title)),
+  );
 };

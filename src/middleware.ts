@@ -14,7 +14,7 @@ export default auth((req) => {
   const isAuthRoute = pathname.startsWith("/auth");
 
   // Keep "/" private? If yes, leave empty.
-  const publicRoutes: string[] = [];
+  const publicRoutes: string[] = ["/api/cron/run-agent"];
   const isPublicRoute = publicRoutes.includes(pathname);
 
   // ✅ CHECK ONLY THE FLAG
@@ -37,7 +37,7 @@ export default auth((req) => {
         // Prevent loop if already there
         if (pathname === "/auth/complete-profile") return NextResponse.next();
         return NextResponse.redirect(
-          new URL("/auth/complete-profile", nextUrl)
+          new URL("/auth/complete-profile", nextUrl),
         );
       }
 
@@ -66,8 +66,8 @@ export default auth((req) => {
     return NextResponse.redirect(
       new URL(
         `/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`,
-        nextUrl
-      )
+        nextUrl,
+      ),
     );
   }
 
