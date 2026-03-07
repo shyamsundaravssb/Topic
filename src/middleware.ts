@@ -14,10 +14,16 @@ export default auth((req) => {
   const isAuthRoute = pathname.startsWith("/auth");
 
   // Keep "/" private? If yes, leave empty.
-  const publicRoutes: string[] = ["/api/cron/run-agent"];
+  // ✅ Allowed public routes
+  const publicRoutes: string[] = ["/", "/api/cron/run-agent"];
   const isPublicRoute = publicRoutes.includes(pathname);
 
-  // ✅ CHECK ONLY THE FLAG
+  // ✅ Dynamic public routes checking
+  const isDynamicPublicRoute =
+    (pathname.startsWith("/topic/") && !pathname.endsWith("/create")) ||
+    (pathname.startsWith("/article/") &&
+      !pathname.endsWith("/new") &&
+      !pathname.endsWith("/edit"));
   // We trust this because:
   // 1. Credential Signup sets this to TRUE.
   // 2. Google Signup defaults this to FALSE.
@@ -60,7 +66,7 @@ export default auth((req) => {
   }
 
   // 4. Redirect unauthenticated users on Protected Routes
-  if (!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isPublicRoute && !isDynamicPublicRoute) {
     let callbackUrl = pathname;
     if (nextUrl.search) callbackUrl += nextUrl.search;
     return NextResponse.redirect(

@@ -30,8 +30,16 @@ const TopicPage = async ({ params, searchParams }: TopicPageProps) => {
 
   if (!topic) notFound();
 
-  const backHref = fromUser ? `/user/${fromUser}` : "/dashboard";
-  const backLabel = fromUser ? "Back to Profile" : "Back to Dashboard";
+  const backHref = fromUser
+    ? `/user/${fromUser}`
+    : session?.user
+      ? "/dashboard"
+      : "/";
+  const backLabel = fromUser
+    ? "Back to Profile"
+    : session?.user
+      ? "Back to Dashboard"
+      : "Back to Home";
   const isCreator = session?.user?.id === topic.creatorId;
 
   return (

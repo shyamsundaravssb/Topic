@@ -30,9 +30,17 @@ const ArticlePage = async ({ params, searchParams }: ArticlePageProps) => {
     ? `/user/${fromUser}`
     : article.topic?.slug
       ? `/topic/${article.topic.slug}`
-      : "/dashboard";
+      : session?.user
+        ? "/dashboard"
+        : "/";
 
-  const backLabel = fromUser ? "Back to Profile" : "Back to Topic";
+  const backLabel = fromUser
+    ? "Back to Profile"
+    : article.topic?.slug
+      ? "Back to Topic"
+      : session?.user
+        ? "Back to Dashboard"
+        : "Back to Home";
 
   const isAuthor = session?.user?.id === article.authorId;
   const isUpdated =

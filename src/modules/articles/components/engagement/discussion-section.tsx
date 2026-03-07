@@ -60,13 +60,25 @@ export async function EngagementSection({ articleId }: EngagementSectionProps) {
       <div className="space-y-10">
         {/* Comment Input */}
         <div className="glass-card p-6 rounded-xl">
-          <h4 className="text-sm font-semibold mb-4 text-muted-foreground">
-            Leaving a comment as{" "}
-            <span className="text-foreground">
-              {session?.user?.username || "Guest"}
-            </span>
-          </h4>
-          <DiscussionForm articleId={articleId} />
+          {session?.user ? (
+            <>
+              <h4 className="text-sm font-semibold mb-4 text-muted-foreground">
+                Leaving a comment as{" "}
+                <span className="text-foreground">
+                  {session.user.username || "Guest"}
+                </span>
+              </h4>
+              <DiscussionForm articleId={articleId} />
+            </>
+          ) : (
+            <div className="text-center py-6">
+              <h4 className="text-lg font-medium mb-2">Join the Discussion</h4>
+              <p className="text-muted-foreground text-sm mb-4">
+                You must be logged in to leave a comment or reply to others.
+              </p>
+              {/* Optional: Add a Link to /auth/login here if desired */}
+            </div>
+          )}
         </div>
 
         {/* Comment List */}

@@ -63,11 +63,14 @@ export function VoteControl({
   );
 
   const handleVote = (type: VoteType) => {
+    // If we don't know the exact user state here, we can infer it or handle it server-side.
+    // However, the action returns an error if not logged in.
     startTransition(() => {
       addOptimisticVote(type);
       toggleVote(articleId, type).then((res) => {
         if (res?.error) {
           toast.error(res.error);
+          // Ideally we would revert optimistic update here, but for simplicity we rely on refresh or toast logic
         }
       });
     });
